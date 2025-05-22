@@ -1,59 +1,48 @@
-import tkinter
-import tkinter.messagebox
-root = tkinter.Tk()
-root.title("TO-DO LIST by @CODSOFT")
+tasks = []
 
-def add_task():
-       task = entry_task.get()
-       if task !=" ":
-                 listbox_tasks.insert(tkinter.END,task)
-                 entry_task.delete(0, tkinter.END)
-       else:
-          tkinter.messagebox.showwarning(title="warning!",meassage="you must enter a task.")
+def show_menu():
+    print("\n----- To-Do List -----")
+    print("1. Add Task")
+    print("2. View Tasks")
+    print("3. Delete Task")
+    print("4. Exit")
 
-def delete_task():
-    try:
-       task_index = listbox_tasks.curselection()[0]
-       listbox_tasks.delete(task_index)
-    except:
-        tkinter.messagebox.showwarning(title="warning!",message = "you must enter a task")
+while True:
+    show_menu()
+    choice = input("Enter your choice (1-4): ")
 
-def load_task():
-      tasks = pickle.load(open("tasks.dat",'rb'))
-      listbox_tasks.delete(0, tkinter.END)
-      for task in tasks:
-          listbox_tasks.insert(tkinter.END,task)
+    if choice == '1':
+        task = input("Enter a task: ")
+        tasks.append(task)
+        print("Task added!")
 
-def save_task():
-     tasks = listbox_tasks.get(0,listbox_tasks.size())
-     pickle.dump(tasks,open("tasks.dat", "wb"))
+    elif choice == '2':
+        if not tasks:
+            print("No tasks yet.")
+        else:
+            print("\nYour Tasks:")
+            for idx, task in enumerate(tasks, 1):
+                print(f"{idx}. {task}")
 
-#create GUI
-frame_tasks = tkinter.Frame(root)
-frame_tasks.pack()
+    elif choice == '3':
+        if not tasks:
+            print("No tasks to delete.")
+        else:
+            for idx, task in enumerate(tasks, 1):
+                print(f"{idx}. {task}")
+            try:
+                delete_index = int(input("Enter task number to delete: ")) - 1
+                if 0 <= delete_index < len(tasks):
+                    deleted = tasks.pop(delete_index)
+                    print(f"Deleted: {deleted}")
+                else:
+                    print("Invalid task number.")
+            except ValueError:
+                print("Please enter a valid number.")
 
-listbox_tasks = tkinter.Listbox(root , height=3 , width=50)
-listbox_tasks.pack(side=tkinter.LEFT)
+    elif choice == '4':
+        print("Goodbye!")
+        break
 
-scrollbar_tasks = tkinter.Scrollbar(root)
-scrollbar_tasks.pack(side=tkinter.RIGHT, fill=tkinter.Y)
-
-listbox_tasks.config(yscrollcommand=scrollbar_tasks.set)
-scrollbar_tasks.config(command=listbox_tasks.yview)
-
-entry_task = tkinter.Entry(root, width=50)
-entry_task.pack()
-
-button_add_task = tkinter.Button(root, text="Add task" , width=48,command=add_task)
-button_add_task.pack()
-
-button_delete_task = tkinter.Button(root, text="delete task", width=48, command=delete_task)
-button_delete_task.pack()
-
-button_load_task = tkinter.Button(root, text="load task", width=48, command=load_task)
-button_load_task.pack()
-
-button_save_task = tkinter.Button(root, text="save task", width=48, command=save_task)
-button_save_task.pack()
-
-root.mainloop()
+    else:
+        print("Invalid choice. Please enter 1-4.")
